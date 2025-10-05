@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>CF AI Research Assistant</title>
+<body style="font-family:system-ui;max-width:720px;margin:40px auto">
+<h1>Research Assistant</h1>
+<p>Session: <code id="sid"></code></p>
+<div id="log" style="white-space:pre-wrap;border:1px solid #ddd;padding:12px;border-radius:8px;min-height:180px"></div>
+<form id="f"><input id="m" style="width:80%" placeholder="Ask…" /><button>Send</button></form>
+<script>
+const sid = crypto.randomUUID(); sid && (document.getElementById('sid').textContent = sid);
+const log = document.getElementById('log'), f = document.getElementById('f'), m = document.getElementById('m');
+const add = (r,t)=>{const d=document.createElement('div');d.textContent=(r==='user'?'You: ':'AI: ')+t;log.appendChild(d);log.scrollTop=log.scrollHeight;};
+f.addEventListener('submit', async (e)=>{e.preventDefault();
+  const message = m.value.trim(); if(!message) return; add('user', message); m.value='';
+  const r = await fetch('/api/chat',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({session_id:sid,message})});
+  const j = await r.json(); add('assistant', j.reply ?? '[no reply]');});
+</script>
+</body>
