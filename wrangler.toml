@@ -1,16 +1,23 @@
-
-name = "ai-research-assistant"
-main = "src/index.js"
-compatibility_date = "2024-01-01"
+name = "cf_ai_research_assistant"
+main = "src/worker.ts"
+compatibility_date = "2025-10-05"
 
 [ai]
-binding = "AI"
+binding = "AI"            # exposes env.AI
 
-[[durable_objects.bindings]]
-name = "CHAT_SESSIONS"
-class_name = "ChatSession"
-script_name = "ai-research-assistant"
+[durable_objects]
+bindings = [{ name = "CHAT_SESSIONS", class_name = "ChatSession" }]
 
+[migrations]
+# bump tag when you change the DO class or storage shape
 [[migrations]]
 tag = "v1"
 new_classes = ["ChatSession"]
+
+# If you serve a static UI from the worker, uncomment:
+# [assets]
+# directory = "public"
+
+[vars]
+# Set to a model you actually have access to via `wrangler ai models list`
+MODEL = "@cf/meta/llama-3.3-instruct"
